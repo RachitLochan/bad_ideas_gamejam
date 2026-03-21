@@ -7,12 +7,13 @@ clock=pygame.time.Clock() #clockobject made
 
 HEIGHT=600 #we need to write a code to automatically find the size of
 LENGTH=1000 #the screen of the player and adjust the screen size automatically i gess
-FPS=12
-PLAYER_FAT=128
-PLAYER_HEIGHT=128
+FPS=24
+PLAYER_FAT=32
+PLAYER_HEIGHT=32
 PLAYER_X=150
 PLAYER_Y=150
-ICON=pygame.image.load("enemies\\CatBasket.png")
+PLAYER_SPEED=20
+ICON=pygame.image.load("enemies\CatBasket.png")
 """we made them constant for easy to use"""
 
 pygame.init #nothing just starting on game
@@ -33,7 +34,7 @@ gameloop=True
 object=pygame.Rect(300,400,32,32)
 
 #define player and objects(for now object and plaer both by player class)
-tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,"caracter\character.png",4)
+tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,"enemies\CatBasket.png",1)
 jerry=Stuff(screen,150,0,64,64,None,(100,200,200))
 ground=Stuff(screen,0,536,1000,64,None,(100,255,200))
 
@@ -54,7 +55,7 @@ while gameloop==True:
         if  event.type == pygame.KEYDOWN and event.key==pygame.K_ESCAPE:
             pygame.quit()
             exit()
-    tom.move()
+    tom.move(PLAYER_SPEED)
     
     
         
