@@ -8,7 +8,7 @@ class Background:
         self.gamewindow=gamewindow
         self.image=None
         if gamewindow== None:
-            self.gamewindow=pygame.display.set_mode((1000,50))
+            self.gamewindow=pygame.display.set_mode((1000,1))
             pygame.display.set_caption("no screen object given to the background class lol what to do")
         
         # if pictureofbackground == None:
