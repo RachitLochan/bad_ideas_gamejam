@@ -10,8 +10,8 @@ clock=pygame.time.Clock() #clockobject made
 HEIGHT=608 #we need to write a code to automatically find the size of
 LENGTH=1024 #the screen of the player and adjust the screen size automatically i gess
 FPS=24
-PLAYER_FAT=32
-PLAYER_HEIGHT=32
+PLAYER_FAT=48
+PLAYER_HEIGHT=77
 PLAYER_X=150
 PLAYER_Y=150
 PLAYER_SPEED=20
@@ -74,12 +74,16 @@ for (start_col, end_col, row) in platform_layout:
 
 all_blocks = floor + platforms  # keeping them together makes collision easier later
 
-tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,os.path.join(BASE_DIR, "caracter", "character.png"),3,all_blocks)
+tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,all_blocks)
 
 while gameloop==True:
         
    
     world.draw()  
+    # tom.movement()
+    
+    tom.update_direction(5)
+    tom.move()
     tom.draw()
     cat.draw()
     for i in all_blocks:
@@ -94,8 +98,8 @@ while gameloop==True:
         if  event.type == pygame.KEYDOWN and event.key==pygame.K_ESCAPE:
             pygame.quit()
             exit()
-    tom.move(PLAYER_SPEED)
     
+    tom.movement(PLAYER_SPEED)
     
         
     pygame.draw.rect(screen,(0,250,250),object,0,1,100,-50,90,1110)
