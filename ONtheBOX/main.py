@@ -7,8 +7,8 @@ import os
 BASE_DIR = os.path.dirname(__file__)
 clock=pygame.time.Clock() #clockobject made
 
-HEIGHT=600 #we need to write a code to automatically find the size of
-LENGTH=1000 #the screen of the player and adjust the screen size automatically i gess
+HEIGHT=608 #we need to write a code to automatically find the size of
+LENGTH=1024 #the screen of the player and adjust the screen size automatically i gess
 FPS=24
 PLAYER_FAT=32
 PLAYER_HEIGHT=32
@@ -21,7 +21,8 @@ PLAYER_VEL = -10
 ICON = pygame.image.load(os.path.join(BASE_DIR, "enemies", "CatBasket.png"))
 """we made them constant for easy to use"""
 
-pygame.init #nothing just starting on game
+
+pygame.init() #nothing just starting on game
 #screen = pygame.display.set_mode((1000,600))
 screen = pygame.display.set_mode((LENGTH,HEIGHT))
 pygame.display.set_caption("we are on the box")
@@ -39,11 +40,41 @@ gameloop=True
 object=pygame.Rect(300,400,32,32)
 cat=Stuff(screen,LENGTH-((BLOCKSIZE)*6),HEIGHT-(BLOCKSIZE+BLOCKSIZE+25),BLOCKSIZE,BLOCKSIZE,os.path.join(BASE_DIR, "enemies", "CatBasket.png"),2,None)
 #define player and objects(for now object and plaer both by player class)
-tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,os.path.join(BASE_DIR, "caracter", "character.png"),1)
+
+# adding platforms and traps 
+
+
 floor=[]
 for i in range(0,LENGTH,BLOCKSIZE):
-    jerry=Stuff(screen,i,HEIGHT-BLOCKSIZE,32,32,os.path.join(BASE_DIR, "lands", "forestland.jpeg"))
+    jerry=Stuff(screen,i,HEIGHT-BLOCKSIZE,32,32,os.path.join(BASE_DIR, "lands","forestland.jpeg"),1,None)
     floor.append(jerry)
+
+# adding platforms, just gonna hardcode positions for now and see how it feels
+# (col * 32, row * 32) basically
+platform_layout = [
+    (6,  10, 14),   # first platform low on the left
+    (13, 17, 11),   # middle one
+    (20, 25, 13),   # longer one in the middle right
+    (28, 31,  9),   # high up on the right side
+    (3,   6, 10),   # small one on the far left
+]
+
+platforms = []
+for (start_col, end_col, row) in platform_layout:
+    for col in range(start_col, end_col):
+        block = Stuff(
+            screen,
+            col * BLOCKSIZE,
+            row * BLOCKSIZE,
+            BLOCKSIZE, BLOCKSIZE,
+            os.path.join(BASE_DIR, "lands", "forestland.jpeg"),
+            1, None
+        )
+        platforms.append(block)
+
+all_blocks = floor + platforms  # keeping them together makes collision easier later
+
+tom=Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,os.path.join(BASE_DIR, "caracter", "character.png"),3,all_blocks)
 
 while gameloop==True:
         
@@ -51,7 +82,7 @@ while gameloop==True:
     world.draw()  
     tom.draw()
     cat.draw()
-    for i in floor:
+    for i in all_blocks:
         i.draw()
     
 
