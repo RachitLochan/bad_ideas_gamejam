@@ -111,7 +111,9 @@ tom = Player(screen,PLAYER_X,PLAYER_Y,PLAYER_FAT,PLAYER_HEIGHT,all_blocks)
 warn_font = pygame.font.SysFont("arialblack", 36)
 hud_font  = pygame.font.Font(None, 32)
 
-# ---- buttons ----
+menu_state = "game"
+sound_on = True
+font = pygame.font.Font(None, 32)
 resume_btn   = Button(screen, "Resume",       LENGTH//2, HEIGHT//2 - 60)
 settings_btn = Button(screen, "Settings",     LENGTH//2, HEIGHT//2)
 quit_btn     = Button(screen, "Quit",         LENGTH//2, HEIGHT//2 + 60)
@@ -178,7 +180,8 @@ spike = Spike(-300, HEIGHT - BLOCKSIZE - 16, 16, 16, screen, PLAYER_X, PLAYER_Y)
 TELEPORT_X = cat.x + cat.width + 20
 TELEPORT_Y = cat.y
 
-# ---- game loop ----
+
+
 while gameloop==True:
 
     world.draw()
@@ -187,17 +190,14 @@ while gameloop==True:
     lives_text = hud_font.render(f"Lives: {tom.health}", True, (255, 255, 255))
     screen.blit(lives_text, (10, 10))
 
-    # ---- active game ----
-    if menu_state == "game" and not game_over:
-
-        tom.update_direction(5)
-        tom.movement(PLAYER_SPEED)
+    if not game_over:
+        tom.movement(PLAYER_SPEED)   #  moved up here (for some)
         tom.move()
         tom.draw()
 
         cat.draw()
         cat.update(tom)
-
+        cat.show_door(tom)
         for i in all_blocks:
             i.draw()
 
@@ -230,43 +230,39 @@ while gameloop==True:
             cat_crying_sound.stop()
             cute_cat_sound.play(-1)
             current_track = "normal"
-
-    # ---- pause menu ----
-    elif menu_state == "pause":
+    
+#this is first part of code for menu
+    if menu_state == "pause":
         world.draw()
-        paused_text = hud_font.render("PAUSED", True, (255, 255, 0))
+        paused_text = font.render("PAUSED", True, (255, 255, 0))
         screen.blit(paused_text, paused_text.get_rect(center=(LENGTH//2, HEIGHT//2 - 120)))
         resume_btn.draw()
         settings_btn.draw()
         quit_btn.draw()
 
-    # ---- settings menu ----
     elif menu_state == "settings":
         world.draw()
-        stitle = hud_font.render("SETTINGS", True, (255, 255, 0))
+        stitle = font.render("SETTINGS", True, (255, 255, 0))
         screen.blit(stitle, stitle.get_rect(center=(LENGTH//2, HEIGHT//2 - 100)))
         audio_btn.draw()
         sback_btn.draw()
 
-    # ---- audio menu ----
     elif menu_state == "audio":
         world.draw()
-        atitle = hud_font.render("AUDIO", True, (255, 255, 0))
+        atitle = font.render("AUDIO", True, (255, 255, 0))
         screen.blit(atitle, atitle.get_rect(center=(LENGTH//2, HEIGHT//2 - 100)))
-        status = hud_font.render(f"Sound: {'ON' if sound_on else 'OFF'}", True, (255, 255, 255))
+        status = font.render(f"Sound: {'ON' if sound_on else 'OFF'}", True, (255, 255, 255))
         screen.blit(status, status.get_rect(center=(LENGTH//2, HEIGHT//2 - 60)))
         toggle_btn.draw()
         aback_btn.draw()
 
-    # ---- end / game over screen ----
     elif menu_state == "end":
         world.draw()
-        etitle = hud_font.render("lil BRO you down bad", True, (255, 0, 0))
+        etitle = font.render("LoL FAILED", True, (255, 0, 0))
         screen.blit(etitle, etitle.get_rect(center=(LENGTH//2, HEIGHT//2 - 80)))
-        elabel = hud_font.render("LoL FAILED", True, (255, 255, 255))
-        screen.blit(elabel, elabel.get_rect(center=(LENGTH//2, HEIGHT//2 - 40)))
         restart_btn.draw()
         mainmenu_btn.draw()
+#this is first part ends here
 
     # ---- events ----
     for event in pygame.event.get():
@@ -278,15 +274,19 @@ while gameloop==True:
             exit()
 
         # P key toggles pause
+            
+#code for menu starts here
         if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
             if menu_state == "game":
                 menu_state = "pause"
             elif menu_state == "pause":
                 menu_state = "game"
 
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+            menu_state = "end"
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-
             if menu_state == "pause":
                 if resume_btn.is_clicked(mouse_pos):
                     menu_state = "game"
@@ -295,13 +295,11 @@ while gameloop==True:
                 elif quit_btn.is_clicked(mouse_pos):
                     pygame.quit()
                     exit()
-
             elif menu_state == "settings":
                 if audio_btn.is_clicked(mouse_pos):
                     menu_state = "audio"
                 elif sback_btn.is_clicked(mouse_pos):
                     menu_state = "pause"
-
             elif menu_state == "audio":
                 if toggle_btn.is_clicked(mouse_pos):
                     sound_on = not sound_on
@@ -326,6 +324,10 @@ while gameloop==True:
                     pygame.quit()
                     exit()
 
+#code for menu ends here
+    #tom.movement(PLAYER_SPEED) someone make me undersatne why a diff move nad movemet is needed its so hard af to debug
+    
+        
     pygame.draw.rect(screen,(0,250,250),object,0,1,100,-50,90,1110)
     pygame.display.update()
     clock.tick(FPS)

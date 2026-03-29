@@ -1,7 +1,8 @@
 import pygame
 import os
 # from player import Player
-
+BASE_DIR = os.path.dirname(__file__)
+img = pygame.image.load(os.path.join(BASE_DIR, "door", "still_door.png"))
 class Enemy(pygame.Rect):
     
     def loadspritesheet(self,path,framefat,frameheight, scale=1):
@@ -22,26 +23,52 @@ class Enemy(pygame.Rect):
                 frames.append(frame)
                   
         return frames
-
-
     def __init__(self,gamewindow,startx,starty,fat,tall,RATIO=None,colour=None):
         pygame.Rect.__init__(self,startx,starty,fat,tall)
-        self.gamewindow=gamewindow
-        self.image=None
-        self.colour=None
-        BASE_DIR = os.path.dirname(__file__)
-        
-        self.idle_frames = self.loadspritesheet(os.path.join(BASE_DIR, "enemies", "meow.png"),32,28,scale=2)
-        self.scratch_frames = self.loadspritesheet(os.path.join(BASE_DIR, "enemies", "monster.png"), 32,28,scale=2)
-        
+
+        self.gamewindow = gamewindow
+        self.image = None
+        self.colour = None
+
+        self.scale = 1
+
+        # 🔹 Enemy animations
+        self.idle_frames = self.loadspritesheet(
+            os.path.join(BASE_DIR, "enemies", "meow.png"), 32, 28, scale=2
+        )
+
+        self.scratch_frames = self.loadspritesheet(
+            os.path.join(BASE_DIR, "enemies", "monster.png"), 32, 28, scale=2
+        )
+
         self.state = "idle"
-        self.frame_index = 0
-        self.animation_speed = 0.2
+        self.anim_index = 0
+        self.animation_speed = 0.4
         self.image = self.idle_frames[0]
-        
+
         self.vel_x = 0
         self.vel_y = 0
-        pygame.Rect.__init__(self,startx,starty,fat,tall)
+
+        # 🔹 Door animation (flattened)
+        self.door_frames = []
+
+        self.door_frames += self.loadspritesheet(
+            os.path.join(BASE_DIR, "enemies", "hide.png"), 32, 28, scale=2
+        )
+
+        self.door_frames += self.loadspritesheet(
+            os.path.join(BASE_DIR, "door", "door.png"), 40, 64, scale=1
+        )
+
+        self.door_frames += self.loadspritesheet(
+            os.path.join(BASE_DIR, "door", "door-sprite.png"), 40, 64, scale=1
+        )
+
+        # 🔹 Door animation control
+        self.door_index = 0
+        self.showing_door = False
+        self.frame_timer = 0
+        self.frame_delay = 10
        
     def update(self, player):
         if self.colliderect(player):
@@ -49,18 +76,35 @@ class Enemy(pygame.Rect):
         else:
             self.state = "idle"   
             
+    def show_door(self, player):
+        if self.right == player.left:
+            self.showing_door = True
+
+            self.frame_timer += 1
+
+            if self.frame_timer >= self.frame_delay:
+                self.frame_timer = 0
+                self.door_index += 1
+
+                if self.door_index >= len(self.door_frames):
+                    self.door_index = len(self.door_frames) - 1
+        
     def draw(self):
+
+        if self.showing_door:
+            image = self.door_frames[self.door_index]
+            self.gamewindow.blit(image, self.topleft)
+            return
 
         if self.state == "idle":
             frames = self.idle_frames
-        elif self.state == "scratch":
+        else:
             frames = self.scratch_frames
 
-        # ANIMATE (for both states)
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(frames):
-            self.frame_index = 0
+        self.anim_index += self.animation_speed
+        if self.anim_index >= len(frames):
+            self.anim_index = 0
 
-        self.image = frames[int(self.frame_index)]
-
+        self.image = frames[int(self.anim_index)]
         self.gamewindow.blit(self.image, self.topleft)
+            
