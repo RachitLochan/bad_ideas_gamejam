@@ -5,10 +5,17 @@ PLAYER_VEL = -10 #todo see this
 #maxhealth is 0 to 5 (both included death at -1 health)
 pd=5 #playerditsnce from cat (idle ) this is a todo
 pygame.init()
+
+BASE_DIR = os.path.dirname(__file__)
 class Player(pygame.Rect):
     #pygame.draw.rect(screen, color, rect)and pygame.Rect diffrece todo->dynamically find size of image and 
     # put accodingly even option toscale
-
+    def pray(self):
+        BASE_DIR = os.path.dirname(__file__)
+        sf = self.scale
+        self.pray_frames = self.loadspritesheet(os.path.join(BASE_DIR, "caracter", "pray.png"), 32, 32)
+        self.pray_frames = [pygame.transform.scale(f, (int(32 * sf), int(32 * sf))) for f in self.pray_frames]
+        self.pray_frames_L = [pygame.transform.flip(f, True, False) for f in self.pray_frames]    
     def loadspritesheet(self,path,framefat,frameheight):
         sheet=pygame.image.load(path)
         frames=[]
@@ -236,9 +243,12 @@ class Player(pygame.Rect):
     def movement(self,speed):
 
         keys=pygame.key.get_pressed()
-        
+         
         self.vel_x = 0
         moving=False
+        
+        if self.state == "pray":  # ← add this
+            return
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.direction = "left"
             moving=True
@@ -300,6 +310,12 @@ class Player(pygame.Rect):
                 self.frame_index = 0
 
             self.image = frames[int(self.frame_index)] #decimal to whole number
+        elif self.state == "pray":
+            frames = self.pray_frames if self.direction == "right" else self.pray_frames_L
+            self.frame_index += self.animation_speed
+            if self.frame_index >= len(frames):
+                self.frame_index = 0
+            self.image = frames[int(self.frame_index)]
 
         elif self.state == "jump": #jump is just 1 image so no len() needed
             self.image = self.jump_frames if self.direction == "right" else self.jump_frames_L
