@@ -71,7 +71,7 @@ class Level1:
         world = Background(screen,(69,69,69),os.path.join(BASE_DIR, "background", "realbg.jpeg"))
 
         self.gameloop    = True
-        object      = pygame.Rect(300,400,32,32)
+        #object      = pygame.Rect(300,400,32,32) this shows we are not ai people
         cat         = Enemy(screen,LENGTH-((BLOCKSIZE)*6),HEIGHT-(BLOCKSIZE+BLOCKSIZE+25),BLOCKSIZE,BLOCKSIZE,2,None)
 
         # game state
