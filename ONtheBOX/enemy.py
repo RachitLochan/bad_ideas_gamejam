@@ -87,7 +87,7 @@ class Enemy(pygame.Rect):
         else:
             self.state = "idle"
     def show_door(self, player):
-        if abs(self.right - player.left) < 10: #advance python funtion but just see how near is player
+        if abs(self.right - player.left) < 15: #advance python funtion but just see how near is player
             self.showing_door = True
 
             self.frame_timer += 1
