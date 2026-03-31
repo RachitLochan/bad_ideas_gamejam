@@ -182,7 +182,7 @@ class Level1:
 
         spike = Spike(-300, HEIGHT - BLOCKSIZE - 16, 16, 16, screen, PLAYER_X, PLAYER_Y)
 
-        TELEPORT_X = cat.x + cat.width + 20
+        TELEPORT_X = cat.x + cat.width + 60
         TELEPORT_Y = cat.y
 
 
