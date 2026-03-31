@@ -71,7 +71,7 @@ class Level2:
         world = Background(screen,(69,69,69),os.path.join(BASE_DIR, "background", "SKY.png"))
 
         self.gameloop    = True
-        object      = pygame.Rect(300,400,32,32)
+        # object      = pygame.Rect(300,400,32,32) really no body but me knows this
         cat         = Enemy(screen,LENGTH-((BLOCKSIZE)*6),HEIGHT-(BLOCKSIZE+BLOCKSIZE+25),BLOCKSIZE,BLOCKSIZE,2,None)
 
         # game state
@@ -381,6 +381,6 @@ class Level2:
             if door_closed_time !=0:
                 if pygame.time.get_ticks() - door_closed_time >= 6000:
                     self.gameloop = False  
-            pygame.draw.rect(screen,(0,250,250),object,0,1,100,-50,90,1110)
+            # pygame.draw.rect(screen,(0,250,250),object,0,1,100,-50,90,1110) only i the creator
             pygame.display.update()
             clock.tick(FPS)
